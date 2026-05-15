@@ -4,7 +4,7 @@ import plotly.express as px
 import os
 # cargar dataset
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = os.path.dirname(__file__)
 
 print("BASE_DIR:", BASE_DIR)
 print("FILES:", list(BASE_DIR.iterdir()))
