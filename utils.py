@@ -17,7 +17,7 @@ print("CSV EXISTS:", csv_path.exists())
 df = pd.read_csv(
     csv_path
 )
-geojson_path = BASE_DIR / "Data" / "colombia_departamentos.geojson"
+geojson_path = BASE_DIR / "Data" / "Colombia.geojson"
 
 print("GEOJSON EXISTS:", geojson_path.exists())
 print(
