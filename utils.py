@@ -4,9 +4,31 @@ import plotly.express as px
 
 # cargar dataset
 import os
-BASE_DIR = os.path.dirname(
-    __file__
+BASE_DIR = os.path.dirname(__file__)
+print("BASE_DIR:", BASE_DIR)
+
+print(
+    "CONTENIDO BASE:",
+    os.listdir(BASE_DIR)
 )
+
+data_path = os.path.join(
+    BASE_DIR,
+    "data"
+)
+
+print(
+    "EXISTE DATA:",
+    os.path.exists(data_path)
+)
+
+if os.path.exists(data_path):
+
+    print(
+        "CONTENIDO DATA:",
+        os.listdir(data_path)
+    )
+
 csv_path = os.path.join(
     BASE_DIR,
     "data",
