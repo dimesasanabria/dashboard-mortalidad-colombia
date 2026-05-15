@@ -5,6 +5,9 @@ import json
 
 BASE_DIR = Path(__file__).resolve().parent
 
+print("ROOT FILES:", list(BASE_DIR.glob("*")))
+print("DATA FILES:", list((BASE_DIR / "data").glob("*")))
+
 print("BASE_DIR:", BASE_DIR)
 
 

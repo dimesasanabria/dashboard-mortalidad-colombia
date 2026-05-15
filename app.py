@@ -84,14 +84,11 @@ dcc.Graph(
 def actualizar_grafico(departamento):
 
     datos = df.copy()
-
     if departamento:
-
         datos = datos[
             datos["DEPARTAMENTO"]
             == departamento
         ]
-
     mensual = (
         datos.groupby("MES")
         .size()
