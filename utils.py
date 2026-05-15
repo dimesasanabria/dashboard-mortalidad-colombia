@@ -3,7 +3,18 @@ import json
 import plotly.express as px
 
 # cargar dataset
-df = pd.read_csv("data/mortalidad_limpia.csv")
+import os
+BASE_DIR = os.path.dirname(
+    __file__
+)
+csv_path = os.path.join(
+    BASE_DIR,
+    "data",
+    "mortalidad_limpia.csv"
+)
+df = pd.read_csv(
+    csv_path
+)
 print("\nCOLUMNAS DEL DATASET:")
 print(df.columns.tolist())
 def grafico_lineas():
@@ -109,11 +120,15 @@ def grafico_lineas_filtrado(
 
     return fig
 
+geojson_path = os.path.join(
+    BASE_DIR,
+    "data",
+    "colombia_departamentos.geojson"
+)
 with open(
-    "data/Colombia.geojson",
+    geojson_path,
     encoding="utf-8"
 ) as f:
-
     geojson = json.load(f)
 
 def grafico_mapa():
