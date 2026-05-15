@@ -20,6 +20,12 @@ df = pd.read_csv(
 geojson_path = BASE_DIR / "Data" / "colombia_departamentos.geojson"
 
 print("GEOJSON EXISTS:", geojson_path.exists())
+print(
+    "ARCHIVOS DATA:",
+    list(
+        (BASE_DIR / "Data").glob("*")
+    )
+)
 
 with open(
         geojson_path,
