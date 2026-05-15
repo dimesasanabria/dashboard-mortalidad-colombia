@@ -1,44 +1,41 @@
 import pandas as pd
 import json
 import plotly.express as px
-
-# cargar dataset
 import os
-BASE_DIR = os.path.dirname(__file__)
+# cargar dataset
+
+BASE_DIR = Path(__file__).resolve().parent
+
 print("BASE_DIR:", BASE_DIR)
+print("FILES:", list(BASE_DIR.iterdir()))
 
-print(
-    "CONTENIDO BASE:",
-    os.listdir(BASE_DIR)
-)
 
-data_path = os.path.join(
-    BASE_DIR,
-    "data"
-)
+csv_path = BASE_DIR / "data" / "mortalidad_limpia.csv"
 
-print(
-    "EXISTE DATA:",
-    os.path.exists(data_path)
-)
+print("CSV PATH:", csv_path)
+print("CSV EXISTS:", csv_path.exists())
 
-if os.path.exists(data_path):
 
-    print(
-        "CONTENIDO DATA:",
-        os.listdir(data_path)
-    )
-
-csv_path = os.path.join(
-    BASE_DIR,
-    "data",
-    "mortalidad_limpia.csv"
-)
 df = pd.read_csv(
     csv_path
 )
+
+
+geojson_path = BASE_DIR / "data" / "colombia_departamentos.geojson"
+
+print("GEOJSON EXISTS:", geojson_path.exists())
+
+
+with open(
+    geojson_path,
+    encoding="utf-8"
+) as f:
+
+    geojson = json.load(f)
+
 print("\nCOLUMNAS DEL DATASET:")
 print(df.columns.tolist())
+
 def grafico_lineas():
     mensual = (
         df.groupby("MES")
@@ -54,6 +51,7 @@ def grafico_lineas():
         title="Muertes por mes"
     )
     return fig
+
 def grafico_homicidios():
 
     homicidios = df[
