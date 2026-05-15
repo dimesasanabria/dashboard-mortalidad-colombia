@@ -145,7 +145,7 @@ def grafico_lineas_filtrado(
 geojson_path = os.path.join(
     BASE_DIR,
     "Data",
-    "colombia_departamentos.geojson"
+    "Colombia.geojson"
 )
 with open(
         geojson_path,
