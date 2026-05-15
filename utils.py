@@ -2,13 +2,11 @@ import os
 from pathlib import Path
 import pandas as pd
 import json
-import px
+import plotly.express as px
 
 BASE_DIR = Path(__file__).resolve().parent
-
 print("ROOT FILES:", list(BASE_DIR.glob("*")))
 print("DATA FILES:", list((BASE_DIR / "Data").glob("*")))
-
 print("BASE_DIR:", BASE_DIR)
 
 csv_path = BASE_DIR / "Data" / "mortalidad_limpia.csv"
