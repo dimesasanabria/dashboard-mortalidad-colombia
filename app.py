@@ -1,142 +1,291 @@
-from dash import (
-    Dash,
-    html,
-    dcc,
-    dash_table,
-    Input,
-    Output
-)
-from utils import *
+import pandas as pd
+import json
+import plotly.express as px
 
-app = Dash(__name__)
-server = app.server
+# cargar dataset
+df = pd.read_csv("data/mortalidad_limpia.csv")
+print("\nCOLUMNAS DEL DATASET:")
+print(df.columns.tolist())
 
-app.layout = html.Div([
 
-    html.H1(
-        "Mortalidad en Colombia 2019"
-    ),
-
-    dcc.Dropdown(
-        id="filtro_departamento",
-        options=[
-            {
-                "label": d,
-                "value": d
-            }
-            for d in obtener_departamentos()
-        ],
-        placeholder="Seleccione departamento"
-    ),
-
-    dcc.Graph(
-        id="grafico_linea"
-    ),
-dcc.Graph(
-    figure=grafico_mapa()
-),
-dcc.Graph(
-    figure=grafico_homicidios()
-),
-dcc.Graph(
-    figure=grafico_sexo_departamento()
-),
-dcc.Graph(
-    figure=grafico_edades()
-),
-html.H3(
-    "Top 10 causas de muerte"
-),
-dash_table.DataTable(
-    data=top_causas().to_dict(
-        "records"
-    ),
-    columns=[
-        {
-            "name": i,
-            "id": i
-        }
-        for i in top_causas().columns
-    ],
-    page_size=10,
-    sort_action="native",
-    style_table={
-        "overflowX": "auto"
-    }
-
-),
-dcc.Graph(
-    figure=grafico_menor_mortalidad()
-)
-])
-
-@app.callback(
-    Output(
-        "grafico_linea",
-        "figure"
-    ),
-    Input(
-        "filtro_departamento",
-        "value"
-    )
-)
-
-def actualizar_grafico(departamento):
-
-    datos = df.copy()
-    if departamento:
-        datos = datos[
-            datos["DEPARTAMENTO"]
-            == departamento
-        ]
+def grafico_lineas():
     mensual = (
-        datos.groupby("MES")
+        df.groupby("MES")
         .size()
         .reset_index(name="TOTAL")
     )
 
-    return grafico_lineas_filtrado(
+    fig = px.line(
+        mensual,
+        x="MES",
+        y="TOTAL",
+        markers=True,
+        title="Muertes por mes"
+    )
+    return fig
+
+
+def grafico_homicidios():
+    homicidios = df[
+
+        df["ES_HOMICIDIO"] == True
+
+        ].copy()
+
+    print(
+        "\nTOTAL HOMICIDIOS:",
+        len(homicidios)
+    )
+    top = (
+        homicidios
+        .groupby(
+            "MUNICIPIO"
+        )
+        .size()
+        .reset_index(
+            name="TOTAL"
+        )
+        .sort_values(
+            "TOTAL",
+            ascending=False
+        )
+        .head(5)
+    )
+    print(
+        "\nTOP HOMICIDIOS:"
+    )
+    print(top)
+
+    fig = px.bar(
+        top,
+        x="MUNICIPIO",
+        y="TOTAL",
+        text="TOTAL",
+        title="Top 5 ciudades más violentas"
+
+    )
+    fig.update_layout(
+        height=500
+    )
+    return fig
+
+
+def grafico_sexo():
+    datos = (
+        df.groupby(
+            ["DEPARTAMENTO", "SEXO_NOMBRE"]
+        )
+        .size()
+        .reset_index(name="TOTAL")
+    )
+
+    fig = px.bar(
+        datos,
+        x="DEPARTAMENTO",
+        y="TOTAL",
+        color="SEXO_NOMBRE",
+        barmode="stack",
+        title="Muertes por sexo"
+    )
+
+    return fig
+
+
+def obtener_departamentos():
+    return sorted(
+        df["DEPARTAMENTO"]
+        .dropna()
+        .unique()
+    )
+
+
+def grafico_lineas_filtrado(
         mensual
+):
+    fig = px.line(
+        mensual,
+        x="MES",
+        y="TOTAL",
+        markers=True,
+        title="Muertes por mes"
     )
 
+    return fig
 
-if __name__=="__main__":
-    app.run(debug=True)
 
-dcc.Graph(
-    figure=grafico_mapa()
-),
-app.layout = html.Div([
+with open(
+        "data/Colombia.geojson",
+        encoding="utf-8"
+) as f:
+    geojson = json.load(f)
 
-    html.H1(
-        "Mortalidad en Colombia 2019"
-    ),
 
-    dcc.Graph(
-        figure=grafico_mapa()
-    ),
-
-    dcc.Dropdown(
-        id="filtro_departamento"
-    ),
-
-    dcc.Graph(
-        id="grafico_linea"
-    ),
-    dcc.Graph(
-    figure=grafico_homicidios()
+def grafico_mapa():
+    deptos = (
+        df.groupby("DEPARTAMENTO")
+        .size()
+        .reset_index(name="TOTAL")
     )
-])
+    # normalizar nombres
+    deptos["DEPARTAMENTO"] = (
+        deptos["DEPARTAMENTO"]
+        .astype(str)
+        .str.upper()
+        .str.strip()
+    )
+    fig = px.choropleth(
+        deptos,
+        geojson=geojson,
+        locations="DEPARTAMENTO",
+        featureidkey="properties.NOMBRE_DPT",
+        color="TOTAL",
+        hover_name="DEPARTAMENTO",
+        projection="mercator",
+        title="Mortalidad en Colombia por departamento"
+    )
+    fig.update_geos(
+        fitbounds="locations",
+        visible=False,
+        showcountries=False,
+        showcoastlines=False,
+        showland=True
+    )
+    fig.update_layout(
+        height=700,
+        margin={
+            "r": 0,
+            "t": 50,
+            "l": 0,
+            "b": 0
+        }
 
-app.layout = html.Div([
+    )
+    return fig
 
-    html.H1("Mortalidad Colombia 2019"),
 
-    dcc.Graph(
-        figure=grafico_mapa()
-    ),
+print(
+    df["COD_MUERTE"]
+    .astype(str)
+    .str.startswith("X95")
+    .value_counts()
+)
 
-    dcc.Dropdown(...),
+df = pd.read_csv(
+    "data/mortalidad_limpia.csv"
+)
 
-    dcc.Graph(...)
-])
+print("\nCODIGOS QUE CONTIENEN X95:")
+
+x95 = df[
+    df["COD_MUERTE"]
+    .astype(str)
+    .str.upper()
+    .str.contains("X95", na=False)
+]["COD_MUERTE"].unique()
+
+print(x95)
+
+print("\nTOTAL ENCONTRADOS:", len(x95))
+
+
+def grafico_sexo_departamento():
+    datos = (
+        df.groupby(
+            [
+                "DEPARTAMENTO",
+                "SEXO_NOMBRE"
+            ]
+        )
+        .size()
+        .reset_index(
+            name="TOTAL"
+        )
+    )
+    fig = px.bar(
+        datos,
+        x="DEPARTAMENTO",
+        y="TOTAL",
+        color="SEXO_NOMBRE",
+        barmode="stack",
+        title="Muertes por sexo en cada departamento"
+    )
+    fig.update_layout(
+        height=600
+    )
+    return fig
+
+
+def grafico_edades():
+    edades = (
+        df.groupby(
+            "CATEGORIA_EDAD"
+        )
+        .size()
+        .reset_index(
+            name="TOTAL"
+        )
+    )
+    fig = px.bar(
+        edades,
+        x="CATEGORIA_EDAD",
+        y="TOTAL",
+        text="TOTAL",
+        title="Distribución de mortalidad por grupos etarios"
+    )
+    fig.update_layout(
+        height=500
+    )
+    return fig
+
+
+def top_causas():
+    causas = (
+        df.groupby(
+            [
+                "COD_MUERTE",
+                "NOM_CAUSA"
+            ]
+        )
+        .size()
+        .reset_index(
+            name="TOTAL"
+        )
+        .sort_values(
+            "TOTAL",
+            ascending=False
+        )
+        .head(10)
+    )
+    return causas
+
+
+def grafico_menor_mortalidad():
+    ciudades = (
+        df.groupby(
+            "MUNICIPIO"
+        )
+        .size()
+        .reset_index(
+            name="TOTAL"
+        )
+        .sort_values(
+            "TOTAL",
+            ascending=True
+        )
+        .head(10)
+
+    )
+    print(
+        "\nCIUDADES MENOR MORTALIDAD:"
+    )
+    print(ciudades)
+    fig = px.pie(
+        ciudades,
+        names="MUNICIPIO",
+        values="TOTAL",
+        title="10 ciudades con menor índice de mortalidad"
+    )
+    fig.update_layout(
+        height=600
+    )
+    return fig

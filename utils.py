@@ -1,39 +1,37 @@
+import os
 from pathlib import Path
 import pandas as pd
 import json
-
+import px
 
 BASE_DIR = Path(__file__).resolve().parent
 
 print("ROOT FILES:", list(BASE_DIR.glob("*")))
-print("DATA FILES:", list((BASE_DIR / "data").glob("*")))
+print("DATA FILES:", list((BASE_DIR / "Data").glob("*")))
 
 print("BASE_DIR:", BASE_DIR)
 
-
-csv_path = BASE_DIR / "data" / "mortalidad_limpia.csv"
+csv_path = BASE_DIR / "Data" / "mortalidad_limpia.csv"
 
 print("CSV PATH:", csv_path)
 print("CSV EXISTS:", csv_path.exists())
 
-
 df = pd.read_csv(
     csv_path
 )
-geojson_path = BASE_DIR / "data" / "colombia_departamentos.geojson"
+geojson_path = BASE_DIR / "Data" / "colombia_departamentos.geojson"
 
 print("GEOJSON EXISTS:", geojson_path.exists())
 
-
 with open(
-    geojson_path,
-    encoding="utf-8"
+        geojson_path,
+        encoding="utf-8"
 ) as f:
-
     geojson = json.load(f)
 
 print("\nCOLUMNAS DEL DATASET:")
 print(df.columns.tolist())
+
 
 def grafico_lineas():
     mensual = (
@@ -51,14 +49,13 @@ def grafico_lineas():
     )
     return fig
 
-def grafico_homicidios():
 
+def grafico_homicidios():
     homicidios = df[
 
         df["ES_HOMICIDIO"] == True
 
-    ].copy()
-
+        ].copy()
 
     print(
         "\nTOTAL HOMICIDIOS:",
@@ -84,7 +81,6 @@ def grafico_homicidios():
     )
     print(top)
 
-
     fig = px.bar(
         top,
         x="MUNICIPIO",
@@ -98,11 +94,11 @@ def grafico_homicidios():
     )
     return fig
 
-def grafico_sexo():
 
+def grafico_sexo():
     datos = (
         df.groupby(
-            ["DEPARTAMENTO","SEXO_NOMBRE"]
+            ["DEPARTAMENTO", "SEXO_NOMBRE"]
         )
         .size()
         .reset_index(name="TOTAL")
@@ -118,17 +114,19 @@ def grafico_sexo():
     )
 
     return fig
-def obtener_departamentos():
 
+
+def obtener_departamentos():
     return sorted(
         df["DEPARTAMENTO"]
         .dropna()
         .unique()
     )
-def grafico_lineas_filtrado(
-    mensual
-):
 
+
+def grafico_lineas_filtrado(
+        mensual
+):
     fig = px.line(
         mensual,
         x="MES",
@@ -139,19 +137,20 @@ def grafico_lineas_filtrado(
 
     return fig
 
+
 geojson_path = os.path.join(
     BASE_DIR,
-    "data",
+    "Data",
     "colombia_departamentos.geojson"
 )
 with open(
-    geojson_path,
-    encoding="utf-8"
+        geojson_path,
+        encoding="utf-8"
 ) as f:
     geojson = json.load(f)
 
-def grafico_mapa():
 
+def grafico_mapa():
     deptos = (
         df.groupby("DEPARTAMENTO")
         .size()
@@ -184,14 +183,15 @@ def grafico_mapa():
     fig.update_layout(
         height=700,
         margin={
-            "r":0,
-            "t":50,
-            "l":0,
-            "b":0
+            "r": 0,
+            "t": 50,
+            "l": 0,
+            "b": 0
         }
 
     )
     return fig
+
 
 print(
     df["COD_MUERTE"]
@@ -200,8 +200,7 @@ print(
     .value_counts()
 )
 
-df = pd.read_csv(
-    "data/mortalidad_limpia.csv"
+df = pd.read_csv("Data/mortalidad_limpia.csv"
 )
 
 print("\nCODIGOS QUE CONTIENEN X95:")
@@ -216,6 +215,7 @@ x95 = df[
 print(x95)
 
 print("\nTOTAL ENCONTRADOS:", len(x95))
+
 
 def grafico_sexo_departamento():
     datos = (
@@ -243,6 +243,7 @@ def grafico_sexo_departamento():
     )
     return fig
 
+
 def grafico_edades():
     edades = (
         df.groupby(
@@ -264,7 +265,8 @@ def grafico_edades():
         height=500
     )
     return fig
-    
+
+
 def top_causas():
     causas = (
         df.groupby(
@@ -284,6 +286,7 @@ def top_causas():
         .head(10)
     )
     return causas
+
 
 def grafico_menor_mortalidad():
     ciudades = (
