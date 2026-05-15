@@ -1,13 +1,11 @@
+from pathlib import Path
 import pandas as pd
 import json
-import plotly.express as px
-import os
-# cargar dataset
 
-BASE_DIR = os.path.dirname(__file__)
+
+BASE_DIR = Path(__file__).resolve().parent
 
 print("BASE_DIR:", BASE_DIR)
-print("FILES:", list(BASE_DIR.iterdir()))
 
 
 csv_path = BASE_DIR / "data" / "mortalidad_limpia.csv"
@@ -19,8 +17,6 @@ print("CSV EXISTS:", csv_path.exists())
 df = pd.read_csv(
     csv_path
 )
-
-
 geojson_path = BASE_DIR / "data" / "colombia_departamentos.geojson"
 
 print("GEOJSON EXISTS:", geojson_path.exists())
