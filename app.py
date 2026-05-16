@@ -63,7 +63,6 @@ dash_table.DataTable(
     style_table={
         "overflowX": "auto"
     }
-
 ),
 dcc.Graph(
     figure=grafico_menor_mortalidad()
