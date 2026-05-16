@@ -139,7 +139,17 @@ app.layout = html.Div([
         figure=grafico_mapa()
     ),
 
-    dcc.Dropdown(...),
-
-    dcc.Graph(...)
+    dcc.Dropdown(
+        id="filtro_departamento",
+        options=[
+            {"label": dep, "value": dep}
+            for dep in sorted(df["DEPARTAMENTO"].unique())
+        ],
+        placeholder="Seleccione un departamento",
+        clearable=True
+    ),
+    dcc.Graph(
+        id="grafico_homicidios",
+        figure=grafico_homicidios()
+    )
 ])
