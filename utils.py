@@ -140,8 +140,6 @@ def grafico_lineas_filtrado(
     )
 
     return fig
-
-
 geojson_path = os.path.join(
     BASE_DIR,
     "Data",
