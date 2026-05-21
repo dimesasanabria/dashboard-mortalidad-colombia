@@ -38,9 +38,9 @@ dcc.Graph(
 dcc.Graph(
     figure=grafico_homicidios()
 ),
-dcc.Graph(
-    figure=grafico_sexo_departamento()
-),
+#dcc.Graph(
+#    figure=grafico_sexo_departamento()
+#),
 dcc.Graph(
     figure=grafico_edades()
 ),
