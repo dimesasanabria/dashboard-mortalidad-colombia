@@ -32,12 +32,12 @@ app.layout = html.Div([
     dcc.Graph(
         id="grafico_linea"
     ),
-dcc.Graph(
-    figure=grafico_mapa()
-),
-dcc.Graph(
-    figure=grafico_homicidios()
-),
+#dcc.Graph(
+#    figure=grafico_mapa()
+#),
+#dcc.Graph(
+ #   figure=grafico_homicidios()
+#),
 #dcc.Graph(
 #    figure=grafico_sexo_departamento()
 #),
