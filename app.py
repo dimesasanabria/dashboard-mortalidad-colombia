@@ -44,29 +44,29 @@ dcc.Graph(
 dcc.Graph(
     figure=grafico_edades()
 ),
-#html.H3(
- #   "Top 10 causas de muerte"
-#),
-#dash_table.DataTable(
-#    data=top_causas().to_dict(
-#        "records"
-#    ),
-#    columns=[
-#        {
-#            "name": i,
-#            "id": i
-#        }
-#        for i in top_causas().columns
-#    ],
-#    page_size=10,
-#    sort_action="native",
-#    style_table={
-#        "overflowX": "auto"
-#    }
-#),
-#dcc.Graph(
-#    figure=grafico_menor_mortalidad()
-#)
+html.H3(
+    "Top 10 causas de muerte"
+),
+dash_table.DataTable(
+    data=top_causas().to_dict(
+        "records"
+    ),
+    columns=[
+        {
+            "name": i,
+            "id": i
+        }
+        for i in top_causas().columns
+    ],
+    page_size=10,
+    sort_action="native",
+    style_table={
+        "overflowX": "auto"
+    }
+),
+dcc.Graph(
+    figure=grafico_menor_mortalidad()
+)
 ])
 
 @app.callback(
